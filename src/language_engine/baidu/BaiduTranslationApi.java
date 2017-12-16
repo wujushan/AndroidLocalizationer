@@ -13,6 +13,7 @@ import language_engine.HttpUtils;
 import module.SupportedLanguages;
 import org.apache.http.message.BasicNameValuePair;
 import org.jetbrains.annotations.NotNull;
+import util.Logger;
 
 import java.net.URLEncoder;
 import java.util.*;
@@ -26,30 +27,6 @@ public class BaiduTranslationApi {
     public BaiduTranslationApi(String appid, String securityKey) {
         this.appid = appid;
         this.securityKey = securityKey;
-    }
-
-    public String getTransResult(String query, String from, String to) {
-        Map<String, String> params = buildParams(query, from, to);
-        return HttpGet.get(TRANS_API_HOST, params);
-    }
-
-    private Map<String, String> buildParams(String query, String from, String to) {
-        Map<String, String> params = new HashMap<String, String>();
-        params.put("q", query);
-        params.put("from", from);
-        params.put("to", to);
-
-        params.put("appid", appid);
-
-        // 随机数
-        String salt = String.valueOf(System.currentTimeMillis());
-        params.put("salt", salt);
-
-        // 签名
-        String src = appid + query + salt + securityKey; // 加密前的原文
-        params.put("sign", MD5.md5(src));
-
-        return params;
     }
 
     /**
@@ -67,9 +44,11 @@ public class BaiduTranslationApi {
         StringBuilder queryBuilder = new StringBuilder();
         for (int i = 0; i < querys.size(); i++) {
             if (i != querys.size() - 1) {
-                queryBuilder.append(URLEncoder.encode(querys.get(i))).append("\n");
+                queryBuilder.append(querys.get(i)).append("\n");
+//                queryBuilder.append(URLEncoder.encode(querys.get(i))).append("\n");
             } else if (i == querys.size() - 1) {
-                queryBuilder.append(URLEncoder.encode(querys.get(i)));
+                queryBuilder.append(querys.get(i));
+//                queryBuilder.append(URLEncoder.encode(querys.get(i)));
             }
         }
 
@@ -79,14 +58,14 @@ public class BaiduTranslationApi {
         params.put("from", sourceLanguageCode.getLanguageCode());
         params.put("to", targetLanguageCode.getLanguageCode());
         String appid = new BasicNameValuePair("client_id",
-                propertiesComponent.getValue(StorageDataKey.BingClientIdStored, Key.BAIDU_CLIENT_ID)).getValue();
+                propertiesComponent.getValue(StorageDataKey.BaiduClientIdStored, Key.BAIDU_CLIENT_ID)).getValue();
         params.put("appid", appid);
         // 随机数
         String salt = String.valueOf(System.currentTimeMillis());
         params.put("salt", salt);
 
         String securityKey = new BasicNameValuePair("client_secret",
-                propertiesComponent.getValue(StorageDataKey.BingClientSecretStored, Key.BAIDU_CLIENT_SECRET)).getValue();
+                propertiesComponent.getValue(StorageDataKey.BaiduClientSecretStored, Key.BAIDU_CLIENT_SECRET)).getValue();
         // 签名
         String src = appid + query + salt + securityKey; // 加密前的原文
         params.put("sign", MD5.md5(src));
@@ -97,6 +76,7 @@ public class BaiduTranslationApi {
             if (errorElement != null) {
                 String errorCode = errorElement.getAsString();
                 String errorMsg = resultObj.get("error_msg").getAsString();
+                Logger.error(errorCode + " :" + errorMsg);
                 return null;
             } else {
                 JsonArray translations = resultObj.getAsJsonArray("trans_result");

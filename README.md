@@ -6,20 +6,13 @@
  
 ![](https://github.com/jinguangyue/AndroidStringsOneTabTranslation/blob/master/screenshots/howUse.gif)
 
-Most of the code comes from: https://github.com/westlinkin/AndroidLocalizationer. 
-But it is not updated for a long time, a lot of bugs, so I changed its project, I hope everyone together to maintain.
+Most of the code comes from: https://github.com/westlinkin/AndroidLocalizationer.  
  
-Differences to AndroidLocalizationer:
+ * Add Baidu Translate as default Translator.
  
- * I only joined Google Translate Because i like google. Secondly I think Google Translate is better than Microsoft Translate
+ * But Baidu translation need to apply APP ID and SecretKey,[click here](http://api.fanyi.baidu.com/api/trans/product/index) to apply one.It is free.
  
- * But Google translation need to apply api key, the key can try 365 days. You can go [google translate api](https://cloud.google.com/translate/docs/getting-started)
- 
- * Change the list to 3 columns to avoid blocking the language below
- 
- * Add all selected features
- 
- * I fixed some bugs. 
+
  
  
  

@@ -52,18 +52,30 @@ public class SettingConfigurable implements Configurable, ActionListener {
 
     private static final String DEFAULT_CLIENT_ID = "Default client id";
     private static final String DEFAULT_CLIENT_SECRET = "Default client secret";
+    private static final String DEFAULT_BAIDU_APPID_PROMPT = "Please input your Baidu APP ID";
+    private static final String DEFAULT_BAIDU_KEY_PROMPT = "Please input your Baidu SecretKey";
 
     private static final String DEFAULT_GOOGLE_API_KEY = "Enter API key here";
 
     private static final String BING_HOW_TO = "<html><a href=\"http://blogs.msdn.com/b/translation/p/gettingstarted1.aspx\">How to get ClientId and ClientSecret?</a></html>";
+    private static final String BAIDU_HOW_TO = "<html><a href=\"http://api.fanyi.baidu.com/api/trans/product/index\">How to get APP ID and SecretKey?</a></html>";
+
+    private MouseAdapter baiduHowTo = new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            try {
+                Desktop.getDesktop().browse(new URI("http://api.fanyi.baidu.com/api/trans/product/index"));
+            } catch (URISyntaxException | IOException e1) {
+                e1.printStackTrace();
+            }
+        }
+    };
     private MouseAdapter bingHowTo = new MouseAdapter() {
         @Override
         public void mouseClicked(MouseEvent e) {
             try {
                 Desktop.getDesktop().browse(new URI("http://blogs.msdn.com/b/translation/p/gettingstarted1.aspx"));
-            } catch (URISyntaxException e1) {
-                e1.printStackTrace();
-            } catch (IOException e1) {
+            } catch (URISyntaxException | IOException e1) {
                 e1.printStackTrace();
             }
         }
@@ -75,9 +87,7 @@ public class SettingConfigurable implements Configurable, ActionListener {
         public void mouseClicked(MouseEvent e) {
             try {
                 Desktop.getDesktop().browse(new URI("https://cloud.google.com/translate/v2/getting_started#intro"));
-            } catch (URISyntaxException e1) {
-                e1.printStackTrace();
-            } catch (IOException e1) {
+            } catch (URISyntaxException | IOException e1) {
                 e1.printStackTrace();
             }
         }
@@ -237,12 +247,12 @@ public class SettingConfigurable implements Configurable, ActionListener {
         switch (currentEngine) {
             case Baidu:
                 if (!line1TextField.getText().trim().isEmpty()) {
-                    propertiesComponent.setValue(StorageDataKey.BingClientIdStored, line1TextField.getText());
+                    propertiesComponent.setValue(StorageDataKey.BaiduClientIdStored, line1TextField.getText());
                     PromptSupport.setPrompt(line1TextField.getText(), line1TextField);
                 }
 
                 if (!line2TextField.getText().trim().isEmpty()) {
-                    propertiesComponent.setValue(StorageDataKey.BingClientSecretStored, line2TextField.getText());
+                    propertiesComponent.setValue(StorageDataKey.BaiduClientSecretStored, line2TextField.getText());
                     PromptSupport.setPrompt(line2TextField.getText(), line2TextField);
                 }
                 line1TextField.setText("");
@@ -332,33 +342,33 @@ public class SettingConfigurable implements Configurable, ActionListener {
         PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
         switch (engineType) {
             case Baidu: {
-                line1Text.setText("Client Id:");
-                line2Text.setText("Client secret:");
+                line1Text.setText("APP ID:");
+                line2Text.setText("SecretKey:");
                 line2Text.setVisible(true);
-
                 line2TextField.setVisible(true);
-
-                howToLabel.setText(BING_HOW_TO);
+                howToLabel.setText(BAIDU_HOW_TO);
                 howToLabel.removeMouseMotionListener(googleHowTo);
-                howToLabel.addMouseListener(bingHowTo);
+                howToLabel.removeMouseMotionListener(bingHowTo);
+                howToLabel.addMouseListener(baiduHowTo);
 
-                String bingClientIdStored = propertiesComponent.getValue(StorageDataKey.BingClientIdStored);
-                String bingClientSecretStored = propertiesComponent.getValue(StorageDataKey.BingClientSecretStored);
+                String baiduClientIdStored = propertiesComponent.getValue(StorageDataKey.BaiduClientIdStored);
+                String baiduClientSecretStored = propertiesComponent.getValue(StorageDataKey.BaiduClientSecretStored);
 
-                if (bingClientIdStored != null) {
-                    PromptSupport.setPrompt(bingClientIdStored, line1TextField);
+                if (baiduClientIdStored != null) {
+                    PromptSupport.setPrompt(baiduClientIdStored, line1TextField);
                 } else {
-                    PromptSupport.setPrompt(DEFAULT_CLIENT_ID, line1TextField);
+                    PromptSupport.setPrompt(DEFAULT_BAIDU_APPID_PROMPT, line1TextField);
                 }
                 line1TextField.setText("");
 
-                if (bingClientSecretStored != null) {
-                    PromptSupport.setPrompt(bingClientSecretStored, line2TextField);
+                if (baiduClientSecretStored != null) {
+                    PromptSupport.setPrompt(baiduClientSecretStored, line2TextField);
                 } else {
-                    PromptSupport.setPrompt(DEFAULT_CLIENT_SECRET, line2TextField);
+                    PromptSupport.setPrompt(DEFAULT_BAIDU_KEY_PROMPT, line2TextField);
                 }
                 line2TextField.setText("");
             }
+            break;
             case Bing: {
                 line1Text.setText("Client Id:");
                 line2Text.setText("Client secret:");
@@ -368,6 +378,7 @@ public class SettingConfigurable implements Configurable, ActionListener {
 
                 howToLabel.setText(BING_HOW_TO);
                 howToLabel.removeMouseMotionListener(googleHowTo);
+                howToLabel.removeMouseMotionListener(baiduHowTo);
                 howToLabel.addMouseListener(bingHowTo);
 
                 String bingClientIdStored = propertiesComponent.getValue(StorageDataKey.BingClientIdStored);
@@ -395,7 +406,8 @@ public class SettingConfigurable implements Configurable, ActionListener {
                 line2TextField.setVisible(false);
 
                 howToLabel.setText(GOOGLE_HOW_TO);
-                howToLabel.removeMouseListener(bingHowTo);
+                howToLabel.removeMouseMotionListener(bingHowTo);
+                howToLabel.removeMouseMotionListener(baiduHowTo);
                 howToLabel.addMouseListener(googleHowTo);
 
                 String googleAPIKey = propertiesComponent.getValue(StorageDataKey.GoogleApiKeyStored);

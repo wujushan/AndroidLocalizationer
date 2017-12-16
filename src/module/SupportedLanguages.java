@@ -92,45 +92,51 @@ public enum SupportedLanguages {
     Vietnamese("vi", "Tiếng Việt", "Vietnamese"),
     Welsh("cy", "Cymraeg", "Welsh"),
     Yiddish("yi", "ייִדיש", "Yiddish"),
+
     AUTO_BAIDU("auto","自动检测","auto check"),
-    Chinese_Simplified_BAIDU("zh", "简体中文", "Chinese Simplified"),
-    Chinese_Traditional_BAIDU("cht", "正體中文", "Chinese Traditional"),
-    English_BAIDU("en", "English", "English"),
-    Cantonese_BAIDU("yue","粤语","Cantonese"),
-    Japanese_BAIDU("jp","日本語","Japanese"),
-    Korea_BAIDU("kor","","Korea"),
-    French_BAIDU("fra", "Français", "French"),
-    Spanish_BAIDU("spa", "Español", "Spanish"),
-    Thai_BAIDU("th", "ไทย", "Thai"),
-    Arabic_BAIDU("ara", "العربية", "Arabic"),
-    Russian_BAIDU("ru", "Русский", "Russian"),
-    Portuguese_BAIDU("pt", "Português", "Portuguese"),
-    German_BAIDU("de", "Deutsch", "German"),
-    Italian_BAIDU("it", "Italiano", "Italian"),
-    Greek_BAIDU("el", "Ελληνικά", "Greek"),
-    Dutch_BAIDU("nl", "Nederlands", "Dutch"),
-    Polish_BAIDU("pl", "Polski", "Polish"),
-    Bulgarian_BAIDU("bul", "Български", "Bulgarian"),
-    Estonian_BAIDU("est", "Eesti", "Estonian"),
-    Danish_BAIDU("dan", "Dansk", "Danish"),
-    Finnish_BAIDU("fin", "Suomi", "Finnish"),
-    Czech_BAIDU("cs", "Čeština", "Czech"),
-    Romanian_BAIDU("rom", "Român", "Romanian"),
-    Slovenian_BAIDU("slo", "Slovenščina", "Slovenian"),
-    Swedish_BAIDU("swe", "Svenska", "Swedish"),
-    Hungarian_BAIDU("hu", "Magyar", "Hungarian"),
-    Vietnamese_BAIDU("vie", "Tiếng Việt", "Vietnamese");
+    Chinese_Simplified_BAIDU("zh", "简体中文", "Chinese Simplified","zh-rCN"),
+    Chinese_Traditional_BAIDU("cht", "正體中文", "Chinese Traditional","zh-rTW"),
+    English_BAIDU("en", "English", "English","en"),
+    Japanese_BAIDU("jp","日本語","Japanese","ja"),
+    Korean_BAIDU("kor","","Korean","ko"),
+    French_BAIDU("fra", "Français", "French","fr"),
+    Spanish_BAIDU("spa", "Español", "Spanish","es"),
+    Thai_BAIDU("th", "ไทย", "Thai","th"),
+    Arabic_BAIDU("ara", "العربية", "Arabic","ar"),
+    Russian_BAIDU("ru", "Русский", "Russian","ru"),
+    Portuguese_BAIDU("pt", "Português", "Portuguese","pt"),
+    German_BAIDU("de", "Deutsch", "German","de"),
+    Italian_BAIDU("it", "Italiano", "Italian","it"),
+    Greek_BAIDU("el", "Ελληνικά", "Greek","el"),
+    Dutch_BAIDU("nl", "Nederlands", "Dutch","nl"),
+    Polish_BAIDU("pl", "Polski", "Polish","pl"),
+    Bulgarian_BAIDU("bul", "Български", "Bulgarian","bg"),
+    Estonian_BAIDU("est", "Eesti", "Estonian","et"),
+    Danish_BAIDU("dan", "Dansk", "Danish","da"),
+    Finnish_BAIDU("fin", "Suomi", "Finnish","fi"),
+    Czech_BAIDU("cs", "Čeština", "Czech","cs"),
+    Romanian_BAIDU("rom", "Român", "Romanian","ro"),
+    Slovenian_BAIDU("slo", "Slovenščina", "Slovenian","sl"),
+    Swedish_BAIDU("swe", "Svenska", "Swedish","sv"),
+    Hungarian_BAIDU("hu", "Magyar", "Hungarian","hu"),
+    Vietnamese_BAIDU("vie", "Tiếng Việt", "Vietnamese","vi");
 
     private String languageCode;
     private String languageDisplayName;
     private String languageEnglishDisplayName;
+    private String realLanguageCode;
 
     SupportedLanguages(String languageCode, String languageDisplayName, String languageEnglishDisplayName) {
         this.languageCode = languageCode;
         this.languageDisplayName = languageDisplayName;
         this.languageEnglishDisplayName = languageEnglishDisplayName;
     }
-
+    SupportedLanguages(String languageCode, String languageDisplayName, String languageEnglishDisplayName,String realLanguageCode) {
+        this.languageCode = languageCode;
+        this.languageDisplayName = languageDisplayName;
+        this.languageEnglishDisplayName = languageEnglishDisplayName;
+        this.realLanguageCode = realLanguageCode;
+    }
     public String getLanguageCode() {
         return languageCode;
     }
@@ -141,6 +147,9 @@ public enum SupportedLanguages {
 
     public String getLanguageEnglishDisplayName() {
         return languageEnglishDisplayName;
+    }
+    public String getRealLanguageCode() {
+        return realLanguageCode;
     }
 
     public static List<SupportedLanguages> getAllSupportedLanguages(TranslationEngineType type) {
@@ -161,6 +170,10 @@ public enum SupportedLanguages {
 
     // get the right value-XX suffix
     public String getAndroidStringFolderNameSuffix() {
+        if (this.name().contains("BAIDU")){
+            System.out.println(this.toString());
+            return this.getRealLanguageCode();
+        }
         if (this == Chinese_Simplified_BING || this == Chinese_Simplified)
             return "zh-rCN";
         if (this == Chinese_Traditional_BING || this == Chinese_Traditional)
@@ -173,13 +186,11 @@ public enum SupportedLanguages {
     // google supported language code: https://cloud.google.com/translate/v2/using_rest, language reference section
     private static List<SupportedLanguages> getBaiduLanguages() {
         List<SupportedLanguages> result = new ArrayList<SupportedLanguages>();
-        result.add(AUTO_BAIDU);
         result.add(Chinese_Simplified_BAIDU);
         result.add(Chinese_Traditional_BAIDU);
         result.add(English_BAIDU);
-        result.add(Cantonese_BAIDU);
         result.add(Japanese_BAIDU);
-        result.add(Korea_BAIDU);
+        result.add(Korean_BAIDU);
         result.add(French_BAIDU);
         result.add(Spanish_BAIDU);
         result.add(Thai_BAIDU);

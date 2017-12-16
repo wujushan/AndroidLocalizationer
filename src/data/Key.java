@@ -28,8 +28,10 @@ public class Key {
     public static final String BING_CLIENT_SCOPE = "http://api.microsofttranslator.com";
     public static final String BING_CLIENT_GRANT_TYPE = "client_credentials";
 
-    public static final String BAIDU_CLIENT_ID = "20171215000105250";
-    public static final String BAIDU_CLIENT_SECRET = "pXDXPRUasM8YTW84zjVe";
+    public static final String BAIDU_CLIENT_ID = "";
+//    public static final String BAIDU_CLIENT_ID = "20171215000105250";
+//    public static final String BAIDU_CLIENT_SECRET = "pXDXPRUasM8YTW84zjVe";
+    public static final String BAIDU_CLIENT_SECRET = "";
 
     // other than api keys
     public static final String NO_NEED_TRANSLATION_ANDROID_STRING_PREFIX = "NAL_";

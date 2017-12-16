@@ -32,6 +32,7 @@ import module.AndroidString;
 import module.SupportedLanguages;
 import org.jetbrains.annotations.Nullable;
 import ui.MultiSelectDialog;
+import util.Logger;
 
 import java.io.IOException;
 import java.util.List;
@@ -39,7 +40,7 @@ import java.util.List;
 /**
  * Created by Wesley Lin on 11/26/14.
  */
-public class ConvertToOtherLanguages extends AnAction implements MultiSelectDialog.OnOKClickedListener {
+public class AndroidLocalization extends AnAction implements MultiSelectDialog.OnOKClickedListener {
 
     private static final String LOCALIZATION_TITLE = "Choose alternative string resources";
     private static final String LOCALIZATION_MSG = "Warning: " +
@@ -54,7 +55,7 @@ public class ConvertToOtherLanguages extends AnAction implements MultiSelectDial
 
     private VirtualFile clickedFile;
 
-    public ConvertToOtherLanguages() {
+    public AndroidLocalization() {
         super("Convert to other languages", null, IconLoader.getIcon("/icons/globe.png"));
 
     }
@@ -72,7 +73,7 @@ public class ConvertToOtherLanguages extends AnAction implements MultiSelectDial
     @Override
     public void actionPerformed(AnActionEvent e) {
         project = CommonDataKeys.PROJECT.getData(e.getDataContext());
-
+        Logger.init(getClass().getSimpleName(), Logger.DEBUG);
         if (project == null) {
             return;
         }
@@ -86,7 +87,8 @@ public class ConvertToOtherLanguages extends AnAction implements MultiSelectDial
         }
 
         try {
-            androidStringsInStringFile = AndroidString.getAndroidStringsList(clickedFile.contentsToByteArray());
+//            androidStringsInStringFile = AndroidString.getAndroidStringsList(clickedFile.contentsToByteArray());
+            androidStringsInStringFile = AndroidString.getAndroidStrings(clickedFile.getInputStream());
         } catch (IOException e1) {
             e1.printStackTrace();
         }

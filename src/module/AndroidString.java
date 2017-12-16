@@ -16,6 +16,12 @@
 
 package module;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+import util.Logger;
+
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -23,6 +29,20 @@ import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+import javax.xml.xpath.XPathFactory;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -36,6 +56,8 @@ import java.util.List;
 public class AndroidString {
     private String key;
     private String value;
+    private Document mDoc;
+    private XPath mXPath;
 
     public AndroidString(String key, String value) {
         this.key = key;
@@ -48,6 +70,7 @@ public class AndroidString {
     }
 
     public AndroidString() {
+
     }
 
     public String getKey() {
@@ -80,6 +103,9 @@ public class AndroidString {
     private static final String KEY_START = "name=\"";
     private static final String KEY_END = "\">";
     private static final String VALUE_END = "</string>";
+
+    private static final String STRING_PATH = "/resources/string";
+    private static final String NAME_PATH = "./@name";
 
     /**
      * @deprecated
@@ -132,6 +158,53 @@ public class AndroidString {
         return result;
     }
 
+    public static List<AndroidString> getAndroidStrings(InputStream xml) {
+        if (xml != null) {
+            List<AndroidString> androidStrings = new ArrayList<>();
+            DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
+            domFactory.setNamespaceAware(true); // never forget this!
+            try {
+                DocumentBuilder builder = domFactory.newDocumentBuilder();
+                XPathFactory factory = XPathFactory.newInstance();
+                XPath mXPath = factory.newXPath();
+                try {
+                    Document doc = builder.parse(xml);
+                    XPathExpression strExpr = mXPath.compile(STRING_PATH);
+                    if (strExpr != null) {
+                        Object result = strExpr.evaluate(doc, XPathConstants.NODESET);
+                        if (result != null) {
+                            NodeList strList = (NodeList) result;
+                            XPathExpression nameExpr = mXPath.compile(NAME_PATH);
+                            if (strList.getLength() > 0) {
+                                for (int i = 0; i < strList.getLength(); i++) {
+                                    Node node = strList.item(i);
+                                    String name = (String) nameExpr.evaluate(node, XPathConstants.STRING);
+                                    String value = node.getTextContent().trim();
+                                    if (name == null || name.length() <= 0 || value.length() <= 0){
+                                        Logger.warn("Warning:name or value is empty in strings.xml");
+                                    }else {
+                                        androidStrings.add(new AndroidString(name,value));
+                                    }
+                                }
+                                return androidStrings;
+                            }
+                        }
+                    }
+                } catch (SAXException | IOException | XPathExpressionException e) {
+                    e.printStackTrace();
+                }
+            } catch (ParserConfigurationException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @param xmlContentByte
+     * @return
+     * @deprecated
+     */
     public static List<AndroidString> getAndroidStringsList(byte[] xmlContentByte) {
         try {
             String fileContent = new String(xmlContentByte, "UTF-8");

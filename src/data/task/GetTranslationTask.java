@@ -16,14 +16,13 @@
 
 package data.task;
 
-import action.ConvertToOtherLanguages;
+import action.AndroidLocalization;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import data.Log;
@@ -31,7 +30,6 @@ import data.SerializeUtil;
 import data.StorageDataKey;
 import language_engine.TranslationEngineType;
 import language_engine.baidu.BaiduTranslationApi;
-import language_engine.bing.BingTranslationApi;
 import language_engine.google.GoogleTranslationApi;
 import module.AndroidString;
 import module.FilterRule;
@@ -132,7 +130,7 @@ public class GetTranslationTask extends Task.Backgroundable {
 
         if (errorMsg == null || errorMsg.isEmpty())
             return;
-        ConvertToOtherLanguages.showSuccessDialog(getProject(), "translation Success");
+        AndroidLocalization.showSuccessDialog(getProject(), "translation Success");
     }
 
     private String getValueResourcePath(SupportedLanguages language) {
@@ -276,7 +274,8 @@ public class GetTranslationTask extends Task.Backgroundable {
         List<AndroidString> existenceAndroidStrings = null;
         if (existenceFile != null && !override) {
             try {
-                existenceAndroidStrings = AndroidString.getAndroidStringsList(existenceFile.contentsToByteArray());
+//                existenceAndroidStrings = AndroidString.getAndroidStringsList(existenceFile.contentsToByteArray());
+                existenceAndroidStrings = AndroidString.getAndroidStrings(existenceFile.getInputStream());
             } catch (IOException e) {
                 e.printStackTrace();
             }
