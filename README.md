@@ -1,14 +1,15 @@
-# A key international plugin in Android studio .The project is for engineers working on Google play developers
+# An import plugin for android developer working on Google play
 
-# How to use?([中文文档](http://blog.csdn.net/CoderYue/article/details/75177505))
+#####[Instructions for usage  from westlinkin](https://github.com/westlinkin/AndroidLocalizationer/blob/master/README.md)
 
-[Download zip](https://github.com/jinguangyue/AndroidStringsOneTabTranslation/blob/master/AndroidStringsOneTabTranslation.zip)
+#####[中文教程](http://blog.csdn.net/wjskeepmaking/article/details/78817915)
+
+#####[Download zip](https://github.com/wujushan/AndroidLocalizationer/blob/master/AndroidLocalization.jar)
  
-Most of the code comes from: https://github.com/westlinkin/AndroidLocalizationer.  
+###ChangeLog
+####version 0.0.1
  
- * Add Baidu Translation as default Translator.
- 
- * But Baidu translation need to apply APP ID and SecretKey,[click here](http://api.fanyi.baidu.com/api/trans/product/index) to apply one for free.
+ * Add Baidu Translation as default Translator.[Click here](http://api.fanyi.baidu.com/api/trans/product/index) to apply one for free.
  
 
  

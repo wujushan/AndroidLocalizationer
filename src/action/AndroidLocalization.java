@@ -95,7 +95,7 @@ public class AndroidLocalization extends AnAction implements MultiSelectDialog.O
 
 
         if (androidStringsInStringFile == null || androidStringsInStringFile.isEmpty()) {
-            showErrorDialog(project, "Target file does not contain any strings.");
+            showErrorDialog(project, "Target file does not contain any strings or is not valid xml file.");
             return;
         }
 
@@ -147,9 +147,10 @@ public class AndroidLocalization extends AnAction implements MultiSelectDialog.O
         if (file.getParent() == null)
             return false;
 
-        // only show popup menu for English strings
+     /*   // only show popup menu for English strings
+
         if (!file.getParent().getName().equals("values") && !file.getParent().getName().startsWith("values-en"))
-            return false;
+            return false;*/
 
         return true;
     }

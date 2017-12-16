@@ -30,12 +30,14 @@ import data.SerializeUtil;
 import data.StorageDataKey;
 import language_engine.TranslationEngineType;
 import language_engine.baidu.BaiduTranslationApi;
+import language_engine.bing.BingTranslationApi;
 import language_engine.google.GoogleTranslationApi;
 import module.AndroidString;
 import module.FilterRule;
 import module.SupportedLanguages;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import util.Logger;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -106,19 +108,14 @@ public class GetTranslationTask extends Task.Backgroundable {
                         Log.i("language===" + language);
                         continue;
                     }
-
                     translationResult.addAll(strings);
-
                     indicator.setFraction(indicatorFractionFrame * (double) (i)
                             + indicatorFractionFrame / filteredAndSplittedString.size() * (double) (j));
                     indicator.setText("Translating to " + language.getLanguageEnglishDisplayName()
                             + " (" + language.getLanguageDisplayName() + ")");
-
                 }
-
                 String fileName = getValueResourcePath(language);
                 List<AndroidString> fileContent = getTargetAndroidStrings(androidStrings, translationResult, fileName, override);
-
                 writeAndroidStringToLocal(myProject, fileName, fileContent);
             }
         }
@@ -169,10 +166,12 @@ public class GetTranslationTask extends Task.Backgroundable {
                 }
                 break;
         }
-
-        List<AndroidString> translatedAndroidStrings = new ArrayList<AndroidString>();
-
-        Log.i("needToTranslatedString.size(): " + needToTranslatedString.size(),
+        if (result == null || result.size() <= 0){
+            return null;
+        }
+        List<AndroidString> translatedAndroidStrings = new ArrayList<>();
+//        Logger.error(needToTranslatedString.size());
+        Logger.info("needToTranslatedString.size(): " + needToTranslatedString.size()+
                 "result.size(): " + result.size());
         for (int i = 0; i < needToTranslatedString.size(); i++) {
             translatedAndroidStrings.add(new AndroidString(
