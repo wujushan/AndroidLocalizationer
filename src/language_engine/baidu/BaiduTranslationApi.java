@@ -67,7 +67,6 @@ public class BaiduTranslationApi {
                 params.put("sign", MD5.md5(src));
                 String getResult = HttpGet.get(TRANS_API_HOST, params);
                 if (getResult != null) {
-                    Logger.error(getResult);
                     JsonObject resultObj = new JsonParser().parse(getResult).getAsJsonObject();
                     JsonElement errorElement = resultObj.get("error_code");
                     if (errorElement != null) {

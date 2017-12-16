@@ -171,8 +171,8 @@ public class GetTranslationTask extends Task.Backgroundable {
         }
         List<AndroidString> translatedAndroidStrings = new ArrayList<>();
 //        Logger.error(needToTranslatedString.size());
-        Logger.info("needToTranslatedString.size(): " + needToTranslatedString.size()+
-                "result.size(): " + result.size());
+//        Logger.info("needToTranslatedString.size(): " + needToTranslatedString.size()+
+//                "result.size(): " + result.size());
         for (int i = 0; i < needToTranslatedString.size(); i++) {
             translatedAndroidStrings.add(new AndroidString(
                     needToTranslatedString.get(i).getKey(), result.get(i)));
