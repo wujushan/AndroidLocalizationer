@@ -114,7 +114,7 @@ public class SettingConfigurable implements Configurable, ActionListener {
     @Nls
     @Override
     public String getDisplayName() {
-        return "AndroidStringsOneTabTranslation";
+        return "AndroidTranslation";
     }
 
     @Nullable

@@ -20,6 +20,7 @@ import java.util.*;
 
 public class BaiduTranslationApi {
     private static final String TRANS_API_HOST = "http://api.fanyi.baidu.com/api/trans/vip/translate";
+    private static final int MAX_BYTE = 6000;
 
     private String appid;
     private String securityKey;
@@ -41,55 +42,66 @@ public class BaiduTranslationApi {
         PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
         if (querys.isEmpty())
             return null;
+        List<StringBuilder> queryBuilders = new ArrayList<>();
         StringBuilder queryBuilder = new StringBuilder();
         for (int i = 0; i < querys.size(); i++) {
-            if (i != querys.size() - 1) {
-                queryBuilder.append(querys.get(i)).append("\n");
-//                queryBuilder.append(URLEncoder.encode(querys.get(i))).append("\n");
-            } else if (i == querys.size() - 1) {
-                queryBuilder.append(querys.get(i));
-//                queryBuilder.append(URLEncoder.encode(querys.get(i)));
+            queryBuilder.append(querys.get(i)).append("\n");
+            int nexLength = (i + 1) == querys.size() ? -1 : querys.get(i + 1).getBytes().length;
+            if (queryBuilder.toString().getBytes().length + nexLength > MAX_BYTE) {
+                queryBuilders.add(queryBuilder);
+                queryBuilder = new StringBuilder();
+            }
+            if (i == querys.size() - 1){
+                queryBuilders.add(queryBuilder);
             }
         }
 
-        String query = queryBuilder.toString();
-        Map<String, String> params = new HashMap<>();
-        params.put("q", query);
-        params.put("from", sourceLanguageCode.getLanguageCode());
-        params.put("to", targetLanguageCode.getLanguageCode());
-        String appid = new BasicNameValuePair("client_id",
-                propertiesComponent.getValue(StorageDataKey.BaiduClientIdStored, Key.BAIDU_CLIENT_ID)).getValue();
-        params.put("appid", appid);
-        // 随机数
-        String salt = String.valueOf(System.currentTimeMillis());
-        params.put("salt", salt);
+        if (queryBuilders.size() > 0) {
+            List<String> results = new ArrayList<>();
+            for (StringBuilder builder : queryBuilders) {
+                String query = builder.toString();
+                Map<String, String> params = new HashMap<>();
+                params.put("q", query);
+                params.put("from", sourceLanguageCode.getLanguageCode());
+                params.put("to", targetLanguageCode.getLanguageCode());
+                String appid = new BasicNameValuePair("client_id",
+                        propertiesComponent.getValue(StorageDataKey.BaiduClientIdStored, Key.BAIDU_CLIENT_ID)).getValue();
+                params.put("appid", appid);
+                // 随机数
+                String salt = String.valueOf(System.currentTimeMillis());
+                params.put("salt", salt);
 
-        String securityKey = new BasicNameValuePair("client_secret",
-                propertiesComponent.getValue(StorageDataKey.BaiduClientSecretStored, Key.BAIDU_CLIENT_SECRET)).getValue();
-        // 签名
-        String src = appid + query + salt + securityKey; // 加密前的原文
-        params.put("sign", MD5.md5(src));
-        String getResult = HttpGet.get(TRANS_API_HOST, params);
-        if (getResult != null) {
-            JsonObject resultObj = new JsonParser().parse(getResult).getAsJsonObject();
-            JsonElement errorElement = resultObj.get("error_code");
-            if (errorElement != null) {
-                String errorCode = errorElement.getAsString();
-                String errorMsg = resultObj.get("error_msg").getAsString();
-                Logger.error(errorCode + " :" + errorMsg);
-                return null;
-            } else {
-                JsonArray translations = resultObj.getAsJsonArray("trans_result");
-                if (translations != null) {
-                    List<String> result = new ArrayList<>();
-                    for (int i = 0; i < translations.size(); i++) {
-                        result.add(translations.get(i).getAsJsonObject().get("dst").getAsString());
+                String securityKey = new BasicNameValuePair("client_secret",
+                        propertiesComponent.getValue(StorageDataKey.BaiduClientSecretStored, Key.BAIDU_CLIENT_SECRET)).getValue();
+                // 签名
+                String src = appid + query + salt + securityKey; // 加密前的原文
+                params.put("sign", MD5.md5(src));
+                String getResult = HttpGet.get(TRANS_API_HOST, params);
+                if (getResult != null) {
+                    JsonObject resultObj = new JsonParser().parse(getResult).getAsJsonObject();
+                    JsonElement errorElement = resultObj.get("error_code");
+                    if (errorElement != null) {
+                        String errorCode = errorElement.getAsString();
+                        String errorMsg = resultObj.get("error_msg").getAsString();
+                        Logger.error(errorCode + " :" + errorMsg);
+                        return null;
+                    } else {
+                        JsonArray translations = resultObj.getAsJsonArray("trans_result");
+                        if (translations != null) {
+                            List<String> result = new ArrayList<>();
+                            for (int i = 0; i < translations.size(); i++) {
+                                result.add(translations.get(i).getAsJsonObject().get("dst").getAsString());
+                            }
+                            results.addAll(result);
+//                            return result;
+                        }
                     }
-                    return result;
+                } else {
+                    return null;
                 }
+                return null;
             }
-        } else {
-            return null;
+            return results;
         }
         return null;
     }
