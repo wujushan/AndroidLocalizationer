@@ -1,4 +1,9 @@
-
+# Created by .ignore support plugin (hsz.mobi)
+### gradle_project template
+.idea
+*.iml
+build
+.gradle
+gradle
 out
-.idea/workspace.xml
-.DS_Store
+gen

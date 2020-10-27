@@ -1,0 +1,32 @@
+<idea-plugin>
+    <id>org.example.wujushan.AndroidLocalizationer</id>
+    <name>Android Localizationer</name>
+    <vendor email="992902801@qq.com" url="http://www.wujushan.com">wujushan</vendor>
+
+    <description><![CDATA[
+      Translate all your strings in your <b>string</b> resources(e.g. strings.xml) to your target languages automactically.<br>
+      Help developers localize their Android app easily, with just one click.<br><br>
+      Use multiple Translation APIs to translate <b>strings</b> into other languages.<br><br>
+      </a>.
+    ]]></description>
+    <idea-version since-build="201.8743"/>
+    <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.lang</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+    </extensions>
+
+    <actions>
+        <!-- Add your actions here -->
+        <action id="AL.Convert" class="com.example.wujs.action.AndroidLocalization"
+          text="Convert to Other Languages"
+          description="Convert this strings.xml to other languages that can be used to localize your Android app.">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="after"
+              relative-to-action="ProjectViewEditSource"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="ctrl shift alt L"/>
+        </action>
+    </actions>
+</idea-plugin>
