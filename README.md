@@ -6,7 +6,7 @@
  
 ### ChangeLog
 
-### version 1.0.0
+#### version 1.0.0
 
  * Compatible with Android Studio 4.1
  
